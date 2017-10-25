@@ -101,6 +101,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710250123418_migracion1.cs" />
+    <Compile Include="Migrations\201710250123418_migracion1.Designer.cs">
+      <DependentUpon>201710250123418_migracion1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CarcelDBContext.cs" />
     <Compile Include="Models\Condena.cs" />
@@ -121,6 +125,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201710250123418_migracion1.resx">
+      <DependentUpon>201710250123418_migracion1.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

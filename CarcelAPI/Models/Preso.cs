@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
 namespace CarcelAPI.Models
 {
+    [Table("Presos")]
     public class Preso
     {
         public int Id { get; set; }
