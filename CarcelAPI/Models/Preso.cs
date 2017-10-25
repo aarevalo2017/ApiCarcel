@@ -14,7 +14,7 @@ namespace CarcelAPI.Models
         public DateTime FechaNacimiento { get; set; }
         public string Domicilio { get; set; }
         public bool Sexo { get; set; }
-
+        public List<Condena> Condenas { get; set; }
 
 
 

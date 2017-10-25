@@ -12,6 +12,6 @@ namespace CarcelAPI.Models
         public string Rut { get; set; }
         public bool Sexo { get; set; }
         public string Domicilio { get; set; }
-        
+        public List<Condena> Condenas { get; set; }
     }
 }
