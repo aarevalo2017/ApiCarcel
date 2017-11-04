@@ -109,6 +109,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\CondenaController.cs" />
     <Compile Include="Controllers\CondenaDelitoController.cs" />
+    <Compile Include="Controllers\DelitoController.cs" />
     <Compile Include="Controllers\JuezController.cs" />
     <Compile Include="Controllers\PresoController.cs" />
     <Compile Include="Global.asax.cs">
