@@ -17,72 +17,85 @@ namespace CarcelAPI.Controllers
         private CarcelDBContext db = new CarcelDBContext();
 
         // GET: api/Condena
-        public IQueryable<Condena> GetCondenas()
+        public IEnumerable<Object> get()
         {
-            return db.Condenas;
+            //return db.Condenas;
+            return db.Condenas.Include("Preso").Select(c => new
+            {
+                id = c.Id,
+                fechaInicio = c.FechaInicioCondena,
+                fechaCondena = c.FechaCondena,
+                preso = new
+                {
+                    nombrePreso = c.Preso.Nombre + " " + c.Preso.Apellido
+                },
+                delitos = c.CondenaDelitos.Select(cd => new
+                {
+                    id = cd.Delito.Id,
+                    nombre = cd.Delito.Nombre,
+                    condenaMaxima = cd.Delito.CondenaMaxima,
+                    condenaMinima = cd.Delito.CondenaMinima
+                })
+            });
         }
 
-        // GET: api/Condena/5
+        // GET: api/Condena/{id}
         [ResponseType(typeof(Condena))]
-        public IHttpActionResult GetCondena(int id)
+        public IHttpActionResult get(int id)
         {
-            Condena condena = db.Condenas.Find(id);
+            var condena = db.Condenas.Include("Preso").Where(c => c.Id == id).Select(c => new
+            {
+                id = c.Id,
+                fechaInicio = c.FechaInicioCondena,
+                fechaCondena = c.FechaCondena,
+                preso = new
+                {
+                    nombrePreso = c.Preso.Nombre + " " + c.Preso.Apellido
+                },
+                delitos = c.CondenaDelitos.Select(cd => new
+                {
+                    id = cd.Delito.Id,
+                    nombre = cd.Delito.Nombre,
+                    condenaMaxima = cd.Delito.CondenaMaxima,
+                    condenaMinima = cd.Delito.CondenaMinima
+                })
+            });
             if (condena == null)
             {
                 return NotFound();
             }
-
             return Ok(condena);
         }
 
-        // PUT: api/Condena/5
+        // PUT: api/Condena/{id}
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutCondena(int id, Condena condena)
+        public IHttpActionResult put(int id, Condena condena)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != condena.Id)
-            {
-                return BadRequest();
-            }
-
             db.Entry(condena).State = EntityState.Modified;
-
-            try
+            if (db.SaveChanges() == 0)
             {
-                db.SaveChanges();
+                return InternalServerError();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CondenaExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(new { mensaje = "Condena modificada correctamente." });
         }
 
         // POST: api/Condena
-        [ResponseType(typeof(Condena))]
-        public IHttpActionResult PostCondena(Condena condena)
+        public IHttpActionResult post(Condena condena)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                db.Condenas.Add(condena);
+                if (db.SaveChanges() == 0)
+                {
+                    return InternalServerError();
+                }
+                return Ok(new { mensaje = "Condena agregado correctamente." });
             }
-
-            db.Condenas.Add(condena);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = condena.Id }, condena);
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+                //throw;
+            }
         }
 
         // DELETE: api/Condena/5
@@ -94,25 +107,12 @@ namespace CarcelAPI.Controllers
             {
                 return NotFound();
             }
-
             db.Condenas.Remove(condena);
-            db.SaveChanges();
-
-            return Ok(condena);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            if (db.SaveChanges() == 0)
             {
-                db.Dispose();
+                return InternalServerError();
             }
-            base.Dispose(disposing);
-        }
-
-        private bool CondenaExists(int id)
-        {
-            return db.Condenas.Count(e => e.Id == id) > 0;
+            return Ok(new { mensaje = "Condena eliminada correctamente." });
         }
     }
 }
