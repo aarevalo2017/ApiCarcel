@@ -18,75 +18,86 @@ namespace CarcelAPI.Controllers
         private CarcelDBContext db = new CarcelDBContext();
 
         // GET: api/Delito
-        public IQueryable<Delito> GetDelitos()
+        public IEnumerable<Object> get()
         {
-            return db.Delitos;
+
+            return db.Delitos.Include("CondenaDelito").Select(c => new
+            {
+                id = c.Id,
+                nombre = c.Nombre,
+                condenaMaxima = c.CondenaMaxima,
+                condenaMinima = c.CondenaMinima
+
+              //  condena = c.CondenaDelitos.Select(cd => new
+               // {
+                 //   id = cd.Condena.Id,
+                   // fechaInicio = cd.Condena.FechaInicioCondena,
+                   // fechaCondena = cd.Condena.FechaCondena,
+                   // preso = cd.Condena.Preso,
+                   // juez = cd.Condena.Juez
+                //})
+            });
         }
 
-        // GET: api/Delito/5
+        // GET: api/Delito/{id}
         [ResponseType(typeof(Delito))]
-        public IHttpActionResult GetDelito(int id)
+        public IHttpActionResult get(int id)
         {
-            Delito delito = db.Delitos.Find(id);
+            var delito = db.Delitos.Include("CondenaDelito").Where(c => c.Id == id).Select(c => new
+            {
+                id = c.Id,
+                nombre = c.Nombre,
+                condenaMaxima = c.CondenaMaxima,
+                condenaMinima = c.CondenaMinima,
+
+              //  condena = c.CondenaDelitos.Select(cd => new
+                //{
+                  //  id = cd.Condena.Id,
+                  //  fechaInicio = cd.Condena.FechaInicioCondena,
+                  //  fechaCondena = cd.Condena.FechaCondena,
+                   // preso = cd.Condena.Preso,
+                    //juez = cd.Condena.Juez
+                //})
+            });
             if (delito == null)
             {
                 return NotFound();
             }
-
             return Ok(delito);
         }
 
-        // PUT: api/Delito/5
+        // PUT: api/Delito/{id}
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutDelito(int id, Delito delito)
+        public IHttpActionResult put(int id, Delito delito)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != delito.Id)
-            {
-                return BadRequest();
-            }
-
             db.Entry(delito).State = EntityState.Modified;
+            if (db.SaveChanges() == 0)
+            {
+                return InternalServerError();
+            }
+            return Ok(new { mensaje = "Delito modificado correctamente." });
+        }
 
+        // POST: api/Condena
+        public IHttpActionResult post(Delito delito)
+        {
             try
             {
-                db.SaveChanges();
+                db.Delitos.Add(delito);
+                if (db.SaveChanges() == 0)
+                {
+                    return InternalServerError();
+                }
+                return Ok(new { mensaje = "Delito agregado correctamente." });
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!DelitoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return InternalServerError(e);
+                //throw;
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Delito
-        [ResponseType(typeof(Delito))]
-        public IHttpActionResult PostDelito(Delito delito)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            db.Delitos.Add(delito);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = delito.Id }, delito);
-        }
-
-        // DELETE: api/Delito/5
+        // DELETE: api/Delito/1
         [ResponseType(typeof(Delito))]
         public IHttpActionResult DeleteDelito(int id)
         {
@@ -95,25 +106,12 @@ namespace CarcelAPI.Controllers
             {
                 return NotFound();
             }
-
             db.Delitos.Remove(delito);
-            db.SaveChanges();
-
-            return Ok(delito);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            if (db.SaveChanges() == 0)
             {
-                db.Dispose();
+                return InternalServerError();
             }
-            base.Dispose(disposing);
-        }
-
-        private bool DelitoExists(int id)
-        {
-            return db.Delitos.Count(e => e.Id == id) > 0;
+            return Ok(new { mensaje = "Delito eliminado correctamente." });
         }
     }
 }
