@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Description;
 using CarcelAPI.Models;
 
 
@@ -20,44 +16,24 @@ namespace CarcelAPI.Controllers
         // GET: api/Delito
         public IEnumerable<Object> get()
         {
-
-            return db.Delitos.Include("CondenaDelito").Select(c => new
+            return db.Delitos.Include("CondenaDelito").Select(d => new
             {
-                id = c.Id,
-                nombre = c.Nombre,
-                condenaMaxima = c.CondenaMaxima,
-                condenaMinima = c.CondenaMinima
-
-              //  condena = c.CondenaDelitos.Select(cd => new
-               // {
-                 //   id = cd.Condena.Id,
-                   // fechaInicio = cd.Condena.FechaInicioCondena,
-                   // fechaCondena = cd.Condena.FechaCondena,
-                   // preso = cd.Condena.Preso,
-                   // juez = cd.Condena.Juez
-                //})
+                id = d.Id,
+                nombre = d.Nombre,
+                condenaMaxima = d.CondenaMaxima,
+                condenaMinima = d.CondenaMinima
             });
         }
 
         // GET: api/Delito/{id}
-        [ResponseType(typeof(Delito))]
         public IHttpActionResult get(int id)
         {
-            var delito = db.Delitos.Include("CondenaDelito").Where(c => c.Id == id).Select(c => new
+            var delito = db.Delitos.Include("CondenaDelito").Where(c => c.Id == id).Select(d => new
             {
-                id = c.Id,
-                nombre = c.Nombre,
-                condenaMaxima = c.CondenaMaxima,
-                condenaMinima = c.CondenaMinima,
-
-              //  condena = c.CondenaDelitos.Select(cd => new
-                //{
-                  //  id = cd.Condena.Id,
-                  //  fechaInicio = cd.Condena.FechaInicioCondena,
-                  //  fechaCondena = cd.Condena.FechaCondena,
-                   // preso = cd.Condena.Preso,
-                    //juez = cd.Condena.Juez
-                //})
+                id = d.Id,
+                nombre = d.Nombre,
+                condenaMaxima = d.CondenaMaxima,
+                condenaMinima = d.CondenaMinima,
             });
             if (delito == null)
             {
@@ -67,8 +43,7 @@ namespace CarcelAPI.Controllers
         }
 
         // PUT: api/Delito/{id}
-        [ResponseType(typeof(void))]
-        public IHttpActionResult put(int id, Delito delito)
+        public IHttpActionResult put(Delito delito)
         {
             db.Entry(delito).State = EntityState.Modified;
             if (db.SaveChanges() == 0)
@@ -93,13 +68,11 @@ namespace CarcelAPI.Controllers
             catch (Exception e)
             {
                 return InternalServerError(e);
-                //throw;
             }
         }
 
-        // DELETE: api/Delito/1
-        [ResponseType(typeof(Delito))]
-        public IHttpActionResult DeleteDelito(int id)
+        // DELETE: api/Delito/{id}
+        public IHttpActionResult delete(int id)
         {
             Delito delito = db.Delitos.Find(id);
             if (delito == null)

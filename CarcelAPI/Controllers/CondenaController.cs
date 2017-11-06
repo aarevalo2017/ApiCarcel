@@ -19,7 +19,6 @@ namespace CarcelAPI.Controllers
         // GET: api/Condena
         public IEnumerable<Object> get()
         {
-            //return db.Condenas;
             return db.Condenas.Include("Preso").Select(c => new
             {
                 id = c.Id,
