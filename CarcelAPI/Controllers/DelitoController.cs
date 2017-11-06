@@ -18,10 +18,10 @@ namespace CarcelAPI.Controllers
         {
             return db.Delitos.Include("CondenaDelito").Select(d => new
             {
-                id = d.Id,
-                nombre = d.Nombre,
-                condenaMaxima = d.CondenaMaxima,
-                condenaMinima = d.CondenaMinima
+                Id = d.Id,
+                Nombre = d.Nombre,
+                CondenaMaxima = d.CondenaMaxima,
+                CondenaMinima = d.CondenaMinima
             });
         }
 

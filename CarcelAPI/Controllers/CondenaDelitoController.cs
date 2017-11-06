@@ -17,9 +17,16 @@ namespace CarcelAPI.Controllers
         private CarcelDBContext db = new CarcelDBContext();
 
         // GET: api/CondenaDelito
-        public IQueryable<CondenaDelito> GetCondenaDelitos()
+        public IEnumerable<Object> GetCondenaDelitos()
         {
-            return db.CondenaDelitos;
+            //return db.CondenaDelitos;
+            return db.CondenaDelitos.Select(cd => new {
+                Id = cd.Id,
+                CondenaId = cd.CondenaId,
+                DelitoId = cd.DelitoId,
+                Delito = cd.Delito,
+                TiempoCondena = cd.TiempoCondena
+            });
         }
 
         // GET: api/CondenaDelito/5

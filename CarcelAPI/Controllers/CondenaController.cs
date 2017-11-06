@@ -19,6 +19,7 @@ namespace CarcelAPI.Controllers
         // GET: api/Condena
         public IEnumerable<Object> get()
         {
+            //return db.Condenas;
             return db.Condenas.Include("Preso").Select(c => new
             {
                 id = c.Id,
@@ -39,7 +40,6 @@ namespace CarcelAPI.Controllers
         }
 
         // GET: api/Condena/{id}
-        [ResponseType(typeof(Condena))]
         public IHttpActionResult get(int id)
         {
             var condena = db.Condenas.Include("Preso").Where(c => c.Id == id).Select(c => new
@@ -67,8 +67,7 @@ namespace CarcelAPI.Controllers
         }
 
         // PUT: api/Condena/{id}
-        [ResponseType(typeof(void))]
-        public IHttpActionResult put(int id, Condena condena)
+        public IHttpActionResult put(Condena condena)
         {
             db.Entry(condena).State = EntityState.Modified;
             if (db.SaveChanges() == 0)
@@ -88,18 +87,17 @@ namespace CarcelAPI.Controllers
                 {
                     return InternalServerError();
                 }
-                return Ok(new { mensaje = "Condena agregado correctamente." });
+                return Ok(new { mensaje = "Condena agregada correctamente." });
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return InternalServerError(e);
-                //throw;
+                return InternalServerError();
             }
         }
 
-        // DELETE: api/Condena/5
+        // DELETE: api/Condena/{id}
         [ResponseType(typeof(Condena))]
-        public IHttpActionResult DeleteCondena(int id)
+        public IHttpActionResult delete(int id)
         {
             Condena condena = db.Condenas.Find(id);
             if (condena == null)
@@ -115,3 +113,21 @@ namespace CarcelAPI.Controllers
         }
     }
 }
+
+//Json para agregar condena con uno o varios delitos.
+//{
+//    "FechaInicioCondena": "01-11-2017",
+//    "FechaCondena": "01-10-2017",
+//    "PresoId": 3,
+//    "JuezId": 1,
+//    "CondenaDelitos":[
+//	    {
+//	        "DelitoId": 4,
+//	        "TiempoCondena": 7
+//	    },
+//	    {
+//	        "DelitoId": 5,
+//	        "TiempoCondena": 7
+//	    }
+//	]
+//}
