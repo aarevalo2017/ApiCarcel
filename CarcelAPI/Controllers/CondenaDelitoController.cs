@@ -17,109 +17,70 @@ namespace CarcelAPI.Controllers
         private CarcelDBContext db = new CarcelDBContext();
 
         // GET: api/CondenaDelito
-        public IEnumerable<Object> GetCondenaDelitos()
+        public IEnumerable<Object> get()
         {
             //return db.CondenaDelitos;
-            return db.CondenaDelitos.Select(cd => new {
+            return db.CondenaDelitos.Select(cd => new
+            {
                 Id = cd.Id,
                 CondenaId = cd.CondenaId,
                 DelitoId = cd.DelitoId,
-                Delito = cd.Delito,
                 TiempoCondena = cd.TiempoCondena
             });
         }
 
         // GET: api/CondenaDelito/5
-        [ResponseType(typeof(CondenaDelito))]
-        public IHttpActionResult GetCondenaDelito(int id)
+        public IHttpActionResult get(int id)
         {
-            CondenaDelito condenaDelito = db.CondenaDelitos.Find(id);
-            if (condenaDelito == null)
+            CondenaDelito cd = db.CondenaDelitos.Find(id);
+            if (cd == null)
             {
                 return NotFound();
             }
-
-            return Ok(condenaDelito);
+            return Ok(new{
+                Id = cd.Id,
+                CondenaId = cd.CondenaId,
+                DelitoId = cd.DelitoId,
+                TiempoCondena = cd.TiempoCondena
+            });
         }
 
-        // PUT: api/CondenaDelito/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutCondenaDelito(int id, CondenaDelito condenaDelito)
+        // PUT: api/CondenaDelito/{id}
+        public IHttpActionResult put(CondenaDelito condenaDelito)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != condenaDelito.Id)
-            {
-                return BadRequest();
-            }
-
             db.Entry(condenaDelito).State = EntityState.Modified;
-
-            try
+            if (db.SaveChanges() == 0)
             {
-                db.SaveChanges();
+                return InternalServerError();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CondenaDelitoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(new { mensaje = "Delito modificado correctamente." });
         }
 
         // POST: api/CondenaDelito
-        [ResponseType(typeof(CondenaDelito))]
-        public IHttpActionResult PostCondenaDelito(CondenaDelito condenaDelito)
+        public IHttpActionResult post(CondenaDelito condenaDelito)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             db.CondenaDelitos.Add(condenaDelito);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = condenaDelito.Id }, condenaDelito);
+            if (db.SaveChanges() == 0)
+            {
+                return InternalServerError();
+            }
+            return Ok(new { mensaje = "Delito agregado correctamente." });
         }
 
-        // DELETE: api/CondenaDelito/5
-        [ResponseType(typeof(CondenaDelito))]
-        public IHttpActionResult DeleteCondenaDelito(int id)
+        // DELETE: api/CondenaDelito/{id}
+        public IHttpActionResult delete(int id)
         {
             CondenaDelito condenaDelito = db.CondenaDelitos.Find(id);
             if (condenaDelito == null)
             {
                 return NotFound();
             }
-
             db.CondenaDelitos.Remove(condenaDelito);
-            db.SaveChanges();
-
-            return Ok(condenaDelito);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            if (db.SaveChanges() == 0)
             {
-                db.Dispose();
+                return InternalServerError();
             }
-            base.Dispose(disposing);
-        }
-
-        private bool CondenaDelitoExists(int id)
-        {
-            return db.CondenaDelitos.Count(e => e.Id == id) > 0;
+            return Ok(new { mensaje = "Delito eliminado correctamente." });
         }
     }
 }

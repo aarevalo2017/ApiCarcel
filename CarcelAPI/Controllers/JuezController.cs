@@ -30,8 +30,7 @@ namespace CarcelAPI.Controllers
         }
 
         // GET: api/Juez/{id}
-        [ResponseType(typeof(Juez))]
-        public IHttpActionResult GetJuez(int id)
+        public IHttpActionResult get(int id)
         {
             Juez juez = db.Jueces.Find(id);
             if (juez == null)
