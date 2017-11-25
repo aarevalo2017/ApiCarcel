@@ -17,5 +17,12 @@ namespace CarcelAPI.Models
         public DbSet<Condena> Condenas { get; set; }
 
         public DbSet<CondenaDelito> CondenaDelitos { get; set; }
+
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.HasDefaultSchema("carcel");
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
