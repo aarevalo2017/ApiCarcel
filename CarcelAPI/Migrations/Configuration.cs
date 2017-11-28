@@ -40,7 +40,11 @@ namespace CarcelAPI.Migrations
                new Delito { Nombre = "Robo con intimidacion", CondenaMinima = 1, CondenaMaxima = 12 },
                new Delito { Nombre = "Robo en lugar no habitado", CondenaMinima = 1, CondenaMaxima = 5 },
                new Delito { Nombre = "Cohecho", CondenaMinima = 5, CondenaMaxima = 8 }
-);
+            );
+            context.Usuarios.AddOrUpdate(
+                u => u.UserName,
+                new Usuario { UserName="admin",Password="admin" }
+                );
 
 
         }

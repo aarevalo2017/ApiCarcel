@@ -12,6 +12,7 @@ using CarcelAPI.Models;
 
 namespace CarcelAPI.Controllers
 {
+    [AuthenticationFilter]
     public class CondenaDelitoController : ApiController
     {
         private CarcelDBContext db = new CarcelDBContext();

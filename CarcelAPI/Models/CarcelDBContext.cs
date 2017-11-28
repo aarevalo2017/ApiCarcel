@@ -18,6 +18,7 @@ namespace CarcelAPI.Models
 
         public DbSet<CondenaDelito> CondenaDelitos { get; set; }
 
+        public DbSet<Usuario> Usuarios { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -8,6 +8,7 @@ using System.Web.Http;
 
 namespace CarcelAPI.Controllers
 {
+    [AuthenticationFilter]
     public class PresoController : ApiController
     {
         private CarcelDBContext context;
